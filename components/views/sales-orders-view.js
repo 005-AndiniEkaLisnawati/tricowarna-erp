@@ -159,7 +159,7 @@ export function SalesOrdersView() {
             setStatus(e.target.value);
             setPage(1);
           }}
-          className="w-auto min-w-[170px]"
+          className="w-auto! min-w-[170px]"
           aria-label="Filter status"
         >
           <option value="all">All Statuses</option>

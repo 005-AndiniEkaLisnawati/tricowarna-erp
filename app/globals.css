@@ -1,26 +1,175 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --canvas: #f5f6f8;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --surface-3: #f1f5f9;
+  --line: #e2e8f0;
+  --line-strong: #cbd5e1;
+  --fg: #0f172a;
+  --muted: #475569;
+  --subtle: #7b8698;
+  --ring: rgba(15, 23, 42, 0.12);
+  --series-1: #2a78d6;
 }
+
+.dark {
+  --canvas: #0b1120;
+  --surface: #0f172a;
+  --surface-2: #131c31;
+  --surface-3: #1e293b;
+  --line: #1e293b;
+  --line-strong: #334155;
+  --fg: #f1f5f9;
+  --muted: #a3afc2;
+  --subtle: #6b7a90;
+  --ring: rgba(241, 245, 249, 0.14);
+  --series-1: #3987e5;
+  color-scheme: dark;
+}
+
+/* Sidebar collapsed to an icon rail (desktop only). The attribute is set on <html>
+   before first paint, so layout never flashes between states. */
+@custom-variant rail (&:where([data-sidebar="rail"] *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-series-1: var(--series-1);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --animate-scan: scan 1.5s ease-in-out infinite;
+  --animate-fade-in: fade-in 160ms ease-out;
+  --animate-slide-in: slide-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-pop: pop 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@keyframes scan {
+  0% { top: 0%; }
+  50% { top: calc(100% - 2px); }
+  100% { top: 0%; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slide-in {
+  from { transform: translateX(16px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes pop {
+  from { transform: translateY(6px) scale(0.98); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+html,
+body {
+  background: var(--canvas);
+  color: var(--fg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: "cv11", "ss01";
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Horizontal pans (pill rows, tab bars, tables) hide the native scrollbar in every
+   engine; drag, trackpad swipe and shift+wheel still scroll. */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Thin, quiet scrollbars for long vertical panes */
+@utility scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Data tables (see components/table-scroll.js) ── */
+.data-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface-2);
+  box-shadow: inset 0 -1px 0 var(--line);
+}
+.data-table tbody tr:hover > td {
+  background-color: color-mix(in oklab, var(--surface-2) 70%, transparent);
+}
+.data-table table[data-resized] th,
+.data-table table[data-resized] td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.col-resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 7px;
+  cursor: col-resize;
+  touch-action: none;
+  z-index: 3;
+}
+.col-resizer::after {
+  content: "";
+  position: absolute;
+  top: 25%;
+  bottom: 25%;
+  right: 0;
+  width: 1px;
+  background: transparent;
+  transition: background-color 120ms, top 120ms, bottom 120ms;
+}
+.data-table thead:hover .col-resizer::after {
+  background: var(--line-strong);
+}
+.col-resizer:hover::after,
+.col-resizer[data-active]::after {
+  top: 0;
+  bottom: 0;
+  background: var(--series-1);
+}
+.is-panning,
+.is-panning * {
+  cursor: grabbing !important;
+  user-select: none !important;
+}
+
+/* Edge fades replace the hidden scrollbar as the "there's more" cue. */
+.drag-scroll[data-fade="right"] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+}
+.drag-scroll[data-fade="left"] {
+  mask-image: linear-gradient(to right, transparent, #000 28px);
+}
+.drag-scroll[data-fade="both"] {
+  mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent);
 }

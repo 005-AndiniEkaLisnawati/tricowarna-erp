@@ -1,7 +1,7 @@
-import { CostCenterView } from "@/components/views/cost-center-view";
+import { BudgetListView } from "@/components/views/budget-views";
 
-export const metadata = { title: "Cost Center & OPEX" };
+export const metadata = { title: "Cost Center" };
 
 export default function Page() {
-  return <CostCenterView />;
+  return <BudgetListView kind="department" />;
 }

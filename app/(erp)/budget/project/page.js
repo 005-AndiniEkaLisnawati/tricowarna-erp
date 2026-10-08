@@ -1,7 +1,7 @@
-import { ProjectBudgetView } from "@/components/views/project-budget-view";
+import { BudgetListView } from "@/components/views/budget-views";
 
 export const metadata = { title: "Project Budget" };
 
 export default function Page() {
-  return <ProjectBudgetView />;
+  return <BudgetListView kind="project" />;
 }

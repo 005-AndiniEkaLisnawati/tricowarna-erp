@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronDown, ChevronsUpDown, PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import { navGroups } from "@/lib/nav";
+import { isActiveNav, navGroups } from "@/lib/nav";
 import { currentUser } from "@/lib/data/org";
 import { Avatar, Kbd } from "@/components/ui";
 import { cx } from "@/lib/format";
@@ -26,6 +26,37 @@ export function toggleRail() {
   try {
     localStorage.setItem("erp-sidebar", next);
   } catch {}
+}
+
+// logoTricowana.png is a 447×447 stacked lockup. Measured ink bounds (source px)
+// let the sidebar lay the mark beside the wordmark instead of shrinking the whole
+// square until the name is unreadable.
+const LOGO = {
+  src: "/logoTricowana.png",
+  size: 447,
+  mark: { x: 46, y: 60, w: 351, h: 227 },
+  wordmark: { x: 55, y: 301, w: 334, h: 64 },
+};
+
+function LogoCrop({ region, height }) {
+  const scale = height / region.h;
+  const full = LOGO.size * scale;
+  return (
+    <span
+      className="relative block shrink-0 overflow-hidden"
+      style={{ width: region.w * scale, height }}
+    >
+      <Image
+        src={LOGO.src}
+        alt=""
+        width={Math.round(full)}
+        height={Math.round(full)}
+        loading="eager"
+        className="absolute max-w-none"
+        style={{ left: -region.x * scale, top: -region.y * scale, width: full, height: full }}
+      />
+    </span>
+  );
 }
 
 export function Sidebar({ pathname, mobileOpen }) {
@@ -57,30 +88,16 @@ export function Sidebar({ pathname, mobileOpen }) {
     >
       <Link
         href="/"
-        aria-label="Triton Kencana Tirta — Command Center"
+        aria-label="PT Trico Wana — Command Center"
         className="flex h-14 shrink-0 items-center overflow-hidden px-4 lg:rail:justify-center lg:rail:px-0"
       >
-        {/* Both marks are navy/black on transparent, so dark mode sets them on a white tile. */}
-        {/* logo.png is a 200×200 canvas with the wordmark in a band across the middle — crop to it. */}
-        <span className="relative h-11 w-34 overflow-hidden rounded-md dark:bg-white lg:rail:hidden">
-          <Image
-            src="/logo.png"
-            alt="Triton Kencana Tirta"
-            fill
-            sizes="136px"
-            loading="eager"
-            className="object-cover object-[50%_44%]"
-          />
+        {/* Navy/black artwork on transparent: dark mode sets it on a white tile. */}
+        <span className="flex items-center gap-2.5 rounded-md dark:bg-white dark:px-2 dark:py-1 lg:rail:hidden">
+          <LogoCrop region={LOGO.mark} height={34} />
+          <LogoCrop region={LOGO.wordmark} height={27} />
         </span>
-        <span className="relative hidden size-9 overflow-hidden rounded-lg dark:bg-white lg:rail:block">
-          <Image
-            src="/favicon.png"
-            alt="Triton Kencana Tirta"
-            fill
-            sizes="36px"
-            loading="eager"
-            className="object-contain p-0.5"
-          />
+        <span className="hidden rounded-lg dark:bg-white dark:p-1.5 lg:rail:block">
+          <LogoCrop region={LOGO.mark} height={26} />
         </span>
       </Link>
 
@@ -108,7 +125,7 @@ export function Sidebar({ pathname, mobileOpen }) {
               {/* In the rail every icon stays visible, regardless of group collapse. */}
               <ul className={cx("mt-0.5 space-y-px", isCollapsed && "hidden lg:rail:block")}>
                 {group.items.map((item) => {
-                  const active = pathname === item.href;
+                  const active = isActiveNav(item.href, pathname);
                   const Icon = item.icon;
                   return (
                     <li key={item.href}>

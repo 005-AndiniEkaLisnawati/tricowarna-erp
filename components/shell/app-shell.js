@@ -33,19 +33,21 @@ export function AppShell({ children }) {
 
   // Open-page tabs (like browser tabs inside the ERP). Track route changes
   // during render instead of in an effect so the tab appears in the same frame.
-  const [tabs, setTabs] = useState(() => (pathname === "/" ? ["/"] : ["/", pathname]));
+  // Tabs are keyed by nav item, so a detail page (/budget/project/x) reuses its module's tab.
+  const navHref = findNav(pathname)?.href;
+  const [tabs, setTabs] = useState(() => (!navHref || navHref === "/" ? ["/"] : ["/", navHref]));
   const [lastPath, setLastPath] = useState(pathname);
   if (pathname !== lastPath) {
     setLastPath(pathname);
     setMobileNav(false);
-    if (!tabs.includes(pathname) && findNav(pathname)) setTabs([...tabs, pathname]);
+    if (navHref && !tabs.includes(navHref)) setTabs([...tabs, navHref]);
   }
 
   const closeTab = (href) => {
     const idx = tabs.indexOf(href);
     const next = tabs.filter((t) => t !== href);
     setTabs(next);
-    if (href === pathname) router.push(next[Math.max(0, idx - 1)] ?? "/");
+    if (href === navHref) router.push(next[Math.max(0, idx - 1)] ?? "/");
   };
 
   useEffect(() => {
@@ -271,7 +273,7 @@ function OpenTabs({ tabs, pathname, onClose }) {
       {tabs.map((href) => {
         const item = findNav(href);
         if (!item) return null;
-        const active = href === pathname;
+        const active = href === findNav(pathname)?.href;
         const Icon = item.icon;
         return (
           <div

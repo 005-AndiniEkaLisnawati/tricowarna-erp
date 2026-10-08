@@ -126,6 +126,35 @@ const statusTone = {
   Aman: "green",
   Waspada: "amber",
   Kritis: "red",
+  // Budgeting
+  "On Budget": "green",
+  "Out of Budget": "red",
+  "On Going": "green",
+  "Multi Years": "violet",
+  Closed: "neutral",
+  // Sales pipeline
+  "Data Baru": "blue",
+  "Follow-up": "amber",
+  Customer: "green",
+  Lost: "red",
+  "Waiting Internal": "amber",
+  "Approved Internal": "green",
+  "Waiting Customer": "blue",
+  "Converted to SO": "indigo",
+  Void: "red",
+  "Awaiting Approval": "amber",
+  Approved: "green",
+  "Ready for DO": "blue",
+  "Ready for Invoice": "blue",
+  // Delivery, invoicing & cash-in
+  "In Transit": "blue",
+  Delivered: "green",
+  "BAST Signed": "green",
+  Unpaid: "amber",
+  "Partially Paid": "blue",
+  Paid: "green",
+  Reconciled: "green",
+  "Pending Match": "amber",
 };
 
 export function StatusBadge({ status, className }) {

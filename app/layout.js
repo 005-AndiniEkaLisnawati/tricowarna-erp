@@ -16,8 +16,8 @@ const themeScript = `try{var d=document.documentElement,t=localStorage.getItem("
 
 export const metadata = {
   title: {
-    template: "%s · doIT ERP Konstruksi",
-    default: "doIT ERP Konstruksi",
+    template: "%s · Trico Wana ERP",
+    default: "Trico Wana ERP",
   },
   description:
     "Demo ERP konstruksi multi-company: estimasi tender, procure-to-pay, kas lapangan, budgeting, akuntansi & pajak.",

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import Link from "next/link";
 import { ChevronDown, ChevronsUpDown, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { navGroups } from "@/lib/nav";
@@ -54,17 +55,34 @@ export function Sidebar({ pathname, mobileOpen }) {
         mobileOpen ? "translate-x-0" : "-translate-x-full",
       )}
     >
-      <div className="flex h-14 shrink-0 items-center gap-2.5 overflow-hidden px-4 lg:rail:justify-center lg:rail:px-0">
-        <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-fg text-[13px] font-bold text-surface">
-          d
+      <Link
+        href="/"
+        aria-label="Triton Kencana Tirta — Command Center"
+        className="flex h-14 shrink-0 items-center overflow-hidden px-4 lg:rail:justify-center lg:rail:px-0"
+      >
+        {/* Both marks are navy/black on transparent, so dark mode sets them on a white tile. */}
+        {/* logo.png is a 200×200 canvas with the wordmark in a band across the middle — crop to it. */}
+        <span className="relative h-11 w-34 overflow-hidden rounded-md dark:bg-white lg:rail:hidden">
+          <Image
+            src="/logo.png"
+            alt="Triton Kencana Tirta"
+            fill
+            sizes="136px"
+            loading="eager"
+            className="object-cover object-[50%_44%]"
+          />
         </span>
-        <span className="text-[15px] font-semibold tracking-tight whitespace-nowrap text-fg lg:rail:hidden">
-          doIT <span className="font-medium text-subtle">ERP</span>
+        <span className="relative hidden size-9 overflow-hidden rounded-lg dark:bg-white lg:rail:block">
+          <Image
+            src="/favicon.png"
+            alt="Triton Kencana Tirta"
+            fill
+            sizes="36px"
+            loading="eager"
+            className="object-contain p-0.5"
+          />
         </span>
-        <span className="ml-auto rounded-md bg-surface-3 px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-subtle uppercase lg:rail:hidden">
-          Konstruksi
-        </span>
-      </div>
+      </Link>
 
       <nav
         className="flex-1 overflow-x-hidden overflow-y-auto px-2.5 pb-4 scroll-thin lg:rail:px-2 lg:rail:scrollbar-none"
